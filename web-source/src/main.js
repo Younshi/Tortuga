@@ -24,6 +24,9 @@ const camera = new THREE.OrthographicCamera(-.62,.62,.62,-.62,.1,100);
 camera.position.set(0,1.8,0);
 camera.up.set(0,0,1);
 camera.lookAt(0,0,0);
+camera.updateMatrixWorld();
+const twinRoot = new THREE.Group();
+scene.add(twinRoot);
 scene.add(new THREE.HemisphereLight(0xd7e7ec, 0x24343c, 2.15));
 const sun = new THREE.DirectionalLight(0xffffff, 2.35);
 sun.position.set(-.4, 1.7, .65);
@@ -39,7 +42,7 @@ function indicator(x,z){
   const mesh = new THREE.Mesh(new THREE.SphereGeometry(.019,16,12),offMaterial);
   mesh.position.set(x,.563,z);
   mesh.scale.y=.42;
-  scene.add(mesh);
+  twinRoot.add(mesh);
   return mesh;
 }
 const powerLed = indicator(.125,.16);
@@ -55,7 +58,7 @@ const controlMeshes = controls.map(({name,position,size})=>{
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), new THREE.MeshBasicMaterial({visible:false}));
   mesh.position.set(...position);
   mesh.userData.action=name;
-  scene.add(mesh);
+  twinRoot.add(mesh);
   return mesh;
 });
 const raycaster = new THREE.Raycaster();
@@ -64,20 +67,78 @@ function hitControl(event){
   const rect=canvas.getBoundingClientRect();
   pointer.set(((event.clientX-rect.left)/rect.width)*2-1,-((event.clientY-rect.top)/rect.height)*2+1);
   raycaster.setFromCamera(pointer,camera);
+  for(const mesh of controlMeshes) mesh.updateWorldMatrix(true,false);
   return raycaster.intersectObjects(controlMeshes,false)[0]?.object.userData.action || null;
 }
+let tilt=0, viewZoom=1, gesture=null, pinchDistance=0;
+const pointers=new Map();
+function setView(){
+  camera.position.set(0,1.8*Math.cos(tilt),-1.8*Math.sin(tilt));
+  camera.lookAt(0,0,0);
+  camera.zoom=viewZoom;
+  camera.updateProjectionMatrix();
+  camera.updateMatrixWorld();
+}
+function resetView(){twinRoot.rotation.y=0;tilt=0;viewZoom=1;setView();}
+function pointerDistance(){
+  const [a,b]=[...pointers.values()];
+  return Math.hypot(a.x-b.x,a.y-b.y);
+}
 canvas.addEventListener('pointerdown',event=>{
-  const action=hitControl(event);
-  if(action){ event.preventDefault(); activate(action,'physical_button_3d'); }
+  event.preventDefault();
+  canvas.setPointerCapture(event.pointerId);
+  pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+  if(pointers.size===1){
+    gesture={id:event.pointerId,startX:event.clientX,startY:event.clientY,lastX:event.clientX,lastY:event.clientY,moved:false,action:hitControl(event)};
+  }else{gesture=null;pinchDistance=pointers.size===2?pointerDistance():0;}
 });
 canvas.addEventListener('pointermove',event=>{
-  canvas.style.cursor=hitControl(event)?'pointer':'default';
+  if(!pointers.has(event.pointerId)){
+    if(event.pointerType==='mouse') canvas.style.cursor=hitControl(event)?'pointer':'grab';
+    return;
+  }
+  event.preventDefault();
+  pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+  if(pointers.size===2){
+    const distance=pointerDistance();
+    if(pinchDistance>0){viewZoom=THREE.MathUtils.clamp(viewZoom*distance/pinchDistance,.8,2.4);setView();}
+    pinchDistance=distance;
+  }else if(pointers.size===1&&gesture?.id===event.pointerId){
+    const dx=event.clientX-gesture.lastX,dy=event.clientY-gesture.lastY;
+    if(Math.hypot(event.clientX-gesture.startX,event.clientY-gesture.startY)>6) gesture.moved=true;
+    if(gesture.moved){
+      twinRoot.rotation.y+=dx*.009;
+      tilt=THREE.MathUtils.clamp(tilt+dy*.006,0,1.05);
+      setView();
+      canvas.style.cursor='grabbing';
+    }
+    gesture.lastX=event.clientX;gesture.lastY=event.clientY;
+  }
 });
-canvas.addEventListener('pointerleave',()=>canvas.style.cursor='default');
+function finishPointer(event,cancelled){
+  if(!pointers.has(event.pointerId)) return;
+  if(!cancelled&&pointers.size===1&&gesture?.id===event.pointerId&&!gesture.moved&&gesture.action&&gesture.action===hitControl(event)){
+    activate(gesture.action,'physical_button_3d');
+  }
+  pointers.delete(event.pointerId);
+  gesture=null;
+  pinchDistance=0;
+  canvas.style.cursor='grab';
+}
+canvas.addEventListener('pointerup',event=>finishPointer(event,false));
+canvas.addEventListener('pointercancel',event=>finishPointer(event,true));
+canvas.addEventListener('pointerleave',()=>{if(!pointers.size)canvas.style.cursor='grab';});
+canvas.addEventListener('wheel',event=>{
+  event.preventDefault();
+  viewZoom=THREE.MathUtils.clamp(viewZoom*Math.exp(-event.deltaY*.001),.8,2.4);
+  setView();
+},{passive:false});
+$('reset-view').addEventListener('click',resetView);
 document.querySelectorAll('[data-action]').forEach(button=>button.addEventListener('click',()=>activate(button.dataset.action,'dashboard_control')));
 document.addEventListener('keydown',event=>{
   if(event.repeat || /INPUT|TEXTAREA/.test(document.activeElement?.tagName || '')) return;
   const key=event.key.toLowerCase();
+  if(key==='r'){event.preventDefault();resetView();return;}
   const action=key==='p'?'power':key==='m'?'mic':key==='+'||key==='='?'volume_up':key==='-'?'volume_down':null;
   if(action){event.preventDefault();activate(action,'keyboard');}
 });
@@ -207,7 +268,7 @@ const loader=new GLTFLoader();
 loader.setMeshoptDecoder(MeshoptDecoder);
 if (renderer) loader.load(asset('caparazon-web.glb'),gltf=>{
   gltf.scene.traverse(obj=>{if(obj.isMesh){obj.castShadow=false;obj.receiveShadow=false;obj.material.side=THREE.DoubleSide;}});
-  scene.add(gltf.scene);
+  twinRoot.add(gltf.scene);
   $('loading').hidden=true;
   window.dispatchEvent(new Event('twin:model-ready'));
 },xhr=>{if(xhr.total)$('load-progress').textContent=`${Math.round(xhr.loaded/xhr.total*100)} %`;},error=>{

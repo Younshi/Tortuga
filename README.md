@@ -2,6 +2,8 @@
 
 Versión interactiva para navegador construida **a partir del FBX del proyecto Unity original**. No es un build del Editor de Unity. Conserva el modelo del caparazón, controles Power / Volume + / Volume − / Mic, estados OFF / ON_LISTENING / ON_MUTED, indicadores, dashboard, tonos de feedback y registro CSV local.
 
+**Vista 3D:** arrastra con mouse o dedo para girar e inclinar, usa la rueda o dos dedos para zoom y pulsa «Restablecer vista» para volver arriba. Un toque breve sobre cada botón 3D sigue activándolo. También hay controles accesibles debajo del modelo.
+
 **Abrir:** https://younshi.github.io/Tortuga/
 
 **Proyecto fuente de referencia:** Unity 6000.3.15f1, escena `Assets/Scenes/Caparazon_DigitalTwin.unity`, modelo `Assets/Models/caparazon.fbx` (SHA-256 `e8c52b20721b22b450b17e3ae15a0d16cf6ca3ab8312ae25b9bbd33a7c2ba825`). La geometría se convirtió desde ese FBX a glTF y se optimizó para Web; el control de estado reproduce el comportamiento de los scripts de Unity. El CSV se guarda en IndexedDB de este navegador y se descarga desde el botón del dashboard; no se envía a un servidor.

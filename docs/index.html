@@ -7,19 +7,19 @@
   <meta name="description" content="Gemelo digital interactivo del caparazón: controles 3D, estados, indicadores y registro de eventos." />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a1118'/%3E%3Cpath d='M10 40 Q12 14 32 12 Q52 14 54 40 Q43 54 32 54 Q21 54 10 40Z' fill='none' stroke='%2347e8aa' stroke-width='5'/%3E%3Cpath d='M15 38h34M32 14v39' stroke='%2347e8aa' stroke-width='3'/%3E%3C/svg%3E" />
   <title>Caparazón · Digital Twin</title>
-  <script type="module" crossorigin src="./assets/index-D4138Rlb.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index--r4O2Ztf.css">
+  <script type="module" crossorigin src="./assets/index-D48awh2V.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BBpiT5sM.css">
 </head>
 <body>
   <main class="app-shell">
     <section class="model-area" aria-label="Modelo interactivo del caparazón">
       <div class="model-head"><span class="eyebrow">DIGITAL TWIN <i></i> 01 / CAPARAZÓN</span><span class="model-caption">MODELO 3D INTERACTIVO</span></div>
-      <div id="viewport" class="viewport" aria-label="Toca los botones sobre el modelo para interactuar">
+      <div id="viewport" class="viewport" aria-label="Arrastra para girar e inclinar el modelo; toca los botones para interactuar">
         <canvas id="twin-canvas"></canvas>
         <div id="loading" class="loading" role="status"><span class="loader-ring"></span><span>Cargando caparazón 3D…</span><small id="load-progress"></small></div>
         <div id="model-error" class="model-error" hidden>No se pudo cargar el modelo 3D. Recarga la página.</div>
         <div class="viewport-corner top-left"></div><div class="viewport-corner top-right"></div><div class="viewport-corner bottom-left"></div><div class="viewport-corner bottom-right"></div>
-        <div class="model-bottom"><span>TOCA LOS CONTROLES DEL CAPARAZÓN</span><span>VISTA SUPERIOR · 01</span></div>
+        <div class="model-bottom"><span>ARRASTRA PARA GIRAR E INCLINAR · RUEDA O PELLIZCA PARA ZOOM</span><button type="button" id="reset-view" aria-label="Restablecer vista del modelo">RESTABLECER VISTA</button></div>
       </div>
       <div class="control-legend" aria-label="Controles alternativos">
         <button type="button" data-action="power" aria-label="Power, encender o apagar"><strong>⏻</strong><span>POWER</span></button>
