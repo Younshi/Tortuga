@@ -49,13 +49,14 @@ const powerLed = indicator(.125,.16);
 const micLed = indicator(-.19,.1);
 
 const controls = [
-  {name:'power',position:[-.03,.515,.122],size:[.09,.07,.09]},
-  {name:'volume_up',position:[-.074,.515,-.033],size:[.105,.07,.08]},
-  {name:'volume_down',position:[.067,.515,-.027],size:[.105,.07,.08]},
-  {name:'mic',position:[.15,.515,.085],size:[.13,.07,.12]},
+  // Centres of the printed symbols on the converted FBX surface (UV -> 3D).
+  {name:'power',position:[.021,.714,.124],radius:.055},
+  {name:'volume_up',position:[.109,.748,-.018],radius:.064},
+  {name:'volume_down',position:[-.060,.755,-.046],radius:.064},
+  {name:'mic',position:[-.116,.715,.079],radius:.064},
 ];
-const controlMeshes = controls.map(({name,position,size})=>{
-  const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), new THREE.MeshBasicMaterial({visible:false}));
+const controlMeshes = controls.map(({name,position,radius})=>{
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(radius,12,8), new THREE.MeshBasicMaterial({visible:false}));
   mesh.position.set(...position);
   mesh.userData.action=name;
   twinRoot.add(mesh);
