@@ -1,0 +1,9 @@
+{
+  "name": "caparazon-digital-twin-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {"dev": "vite --host 0.0.0.0", "build": "vite build --base=./", "preview": "vite preview --host 0.0.0.0"},
+  "dependencies": {"three": "0.186.1"},
+  "devDependencies": {"vite": "7.3.1", "fbx2gltf": "0.9.7-p1", "@gltf-transform/cli": "4.3.0"}
+}

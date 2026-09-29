@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a1118" />
+  <meta name="description" content="Gemelo digital interactivo del caparazón: controles 3D, estados, indicadores y registro de eventos." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a1118'/%3E%3Cpath d='M10 40 Q12 14 32 12 Q52 14 54 40 Q43 54 32 54 Q21 54 10 40Z' fill='none' stroke='%2347e8aa' stroke-width='5'/%3E%3Cpath d='M15 38h34M32 14v39' stroke='%2347e8aa' stroke-width='3'/%3E%3C/svg%3E" />
+  <title>Caparazón · Digital Twin</title>
+  <script type="module" crossorigin src="./assets/index-D4138Rlb.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index--r4O2Ztf.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="model-area" aria-label="Modelo interactivo del caparazón">
+      <div class="model-head"><span class="eyebrow">DIGITAL TWIN <i></i> 01 / CAPARAZÓN</span><span class="model-caption">MODELO 3D INTERACTIVO</span></div>
+      <div id="viewport" class="viewport" aria-label="Toca los botones sobre el modelo para interactuar">
+        <canvas id="twin-canvas"></canvas>
+        <div id="loading" class="loading" role="status"><span class="loader-ring"></span><span>Cargando caparazón 3D…</span><small id="load-progress"></small></div>
+        <div id="model-error" class="model-error" hidden>No se pudo cargar el modelo 3D. Recarga la página.</div>
+        <div class="viewport-corner top-left"></div><div class="viewport-corner top-right"></div><div class="viewport-corner bottom-left"></div><div class="viewport-corner bottom-right"></div>
+        <div class="model-bottom"><span>TOCA LOS CONTROLES DEL CAPARAZÓN</span><span>VISTA SUPERIOR · 01</span></div>
+      </div>
+      <div class="control-legend" aria-label="Controles alternativos">
+        <button type="button" data-action="power" aria-label="Power, encender o apagar"><strong>⏻</strong><span>POWER</span></button>
+        <button type="button" data-action="volume_up" aria-label="Subir volumen"><strong>+</strong><span>VOL +</span></button>
+        <button type="button" data-action="volume_down" aria-label="Bajar volumen"><strong>−</strong><span>VOL −</span></button>
+        <button type="button" data-action="mic" aria-label="Silenciar o activar micrófono"><strong class="mic-symbol">◉</strong><span>MIC</span></button>
+      </div>
+    </section>
+    <aside class="dashboard" aria-label="Dashboard del gemelo digital">
+      <div class="dash-title"><div><span class="eyebrow">TELEMETRÍA / EN VIVO</span><h1>Caparazón<span> Digital Twin</span></h1></div><span id="status-badge" class="status-badge">OFF</span></div>
+      <div class="state-card"><div class="card-top"><span>ESTADO ACTUAL</span><span class="live-indicator"><i></i> LOCAL</span></div><p id="state-display">OFF</p><div class="state-track"><i id="state-segment-1"></i><i id="state-segment-2"></i><i id="state-segment-3"></i></div></div>
+      <div class="metrics"><div class="metric"><span>POWER</span><div><span id="power-led" class="led"></span><strong id="power-display">OFF</strong></div></div><div class="metric"><span>MIC</span><div><span id="mic-led" class="led"></span><strong id="mic-display">LISTENING</strong></div></div></div>
+      <div class="volume-card"><div class="card-top"><span>VOLUMEN</span><strong><span id="volume-display">50</span><small> / 100</small></strong></div><div class="volume-track"><span id="volume-fill"></span></div><div class="scale"><span>0</span><span>50</span><span>100</span></div></div>
+      <div class="event-card"><span class="eyebrow">ÚLTIMO EVENTO</span><strong id="event-display">startup</strong><span id="detail-display">Initial OFF snapshot</span><small id="timestamp-display">—</small></div>
+      <div class="logger"><div><span class="eyebrow">REGISTRO</span><span id="storage-state">Preparando almacenamiento…</span></div><button type="button" id="export-csv">DESCARGAR CSV</button></div>
+      <p class="footnote">Fuente: interacción local · Power activa los controles secundarios.<br>Teclas: P, +, −, M.</p>
+    </aside>
+  </main>
+</body>
+</html>
